@@ -1,0 +1,16 @@
+{
+  "name": "simplified/database",
+  "description": "Simplified database module",
+  "license":"MIT",
+  "authors": [
+    {
+      "name": "Andreas Bratfisch",
+      "email": "duskman72@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Simplified\\Database\\":"src/"
+    }
+  }
+}
