@@ -2,6 +2,7 @@
 
 namespace Simplified\Database\SqlBuilder;
 
+use PhpCollection\Sequence;
 use Simplified\Core\IllegalArgumentException;
 use Simplified\Database\Connection;
 
@@ -53,7 +54,7 @@ class SelectQuery extends CommonQuery {
                 $stmt->setFetchMode(\PDO::FETCH_CLASS,$this->objectClass);
             else
                 $stmt->setFetchMode(\PDO::FETCH_COLUMN, 0);
-            $result = $stmt->fetch();
+            $result = $stmt->rowCount() == 1 ? $stmt->fetch() : new Sequence($stmt->fetchAll());
             return $result;
         }
         return null;
