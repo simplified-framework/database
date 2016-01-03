@@ -65,7 +65,7 @@ class Model {
         $table_name = $instance->getTable();
 
         $connectionName = $instance->getConnection();
-        $config = Config::get('database', $connectionName, 'default');
+        $config = Config::get('database.'.$connectionName, 'default');
         $conn = new Connection($config);
 
         return (new SelectQuery($table_name, $conn))
@@ -82,7 +82,7 @@ class Model {
         $table_name = $instance->getTable();
 
         $connectionName = $instance->getConnection();
-        $config = Config::get('database', $connectionName, 'default');
+        $config = Config::get('database.'.$connectionName, 'default');
         $conn = new Connection($config);
 
         return (new SelectQuery($table_name, $conn))
@@ -97,7 +97,7 @@ class Model {
         $table_name = $instance->getTable();
 
         $connectionName = $instance->getConnection();
-        $config = Config::get('database', $connectionName, 'default');
+        $config = Config::get('database.'.$connectionName, 'default');
         $conn = new Connection($config);
 
         return (new SelectQuery($table_name, $conn))
@@ -107,7 +107,7 @@ class Model {
 
     public function save() {
         $table_name = $this->getTable();
-        $config = Config::get('database', $this->getConnection(), 'default');
+        $config = Config::get('database.'.$this->getConnection(), 'default');
         $conn = new Connection($config);
 
         $pk = $this->getPrimaryKey();
@@ -129,7 +129,7 @@ class Model {
 
     public function delete() {
         $table_name = $this->getTable();
-        $config = Config::get('database', $this->getConnection(), 'default');
+        $config = Config::get('database.'.$this->getConnection(), 'default');
         $conn = new Connection($config);
 
         $pk = $this->getPrimaryKey();
