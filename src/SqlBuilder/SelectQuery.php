@@ -16,7 +16,7 @@ class SelectQuery extends CommonQuery {
 
         parent::__construct($conn);
         $this->type = "SELECT";
-        $this->fields = $from.".*";
+        $this->fields[] = $from.".*";
         $this->table = $from;
     }
 

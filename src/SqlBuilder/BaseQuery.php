@@ -8,7 +8,7 @@ abstract class BaseQuery {
     private $connection;
     protected $type;
     protected $table;
-    protected $fields;
+    protected $fields = array();
     protected $values;
     protected $objectClass;
 

@@ -9,6 +9,7 @@
 namespace Simplified\Database\SqlBuilder;
 use Simplified\Database\Connection;
 use Simplified\Core\IllegalArgumentException;
+use Simplified\Database\ModelException;
 
 class CommonQuery extends BaseQuery{
     private $andWhere = array();
@@ -111,11 +112,23 @@ class CommonQuery extends BaseQuery{
         return $this;
     }
 
-    public function join($table, $primaryKey, $foreignKey) {
-        if (!is_string($table) || !is_string($primaryKey) || !is_string($foreignKey))
-            throw new IllegalArgumentException("Table, primary key and foreign key argument must be string");
+    public function join($table, $arg2, $arg3=null) {
+        if (func_num_args() == 2) {
+            if (!$arg2 instanceof \Closure)
+                throw new ModelException("Argument must be instance of Closure");
 
-        $this->joins[] = "LEFT JOIN $table ON $primaryKey=$foreignKey";
+            $join = new Join($table);
+            $arg2($join);
+
+            $this->joins[] = (string) $join;
+            $this->fields[] = $join->getTableShortcut() . ".*";
+        }
+        else {
+            if (!is_string($table) || !is_string($arg2) || !is_string($arg3))
+                throw new IllegalArgumentException("Table, primary key and foreign key argument must be string");
+
+            $this->joins[] = "LEFT JOIN $table ON $arg2=$arg3";
+        }
         return $this;
     }
 
@@ -139,7 +152,7 @@ class CommonQuery extends BaseQuery{
     public function getQuery() {
         $query = "";
         if (count($this->joins) > 0)
-            $query .= " " . implode(" ", $this->joins);
+            $query .= implode(" ", $this->joins);
 
         if (count($this->andWhere) > 0)
             $query .= " WHERE " . implode(" AND ", $this->andWhere);
