@@ -136,6 +136,30 @@ class Model {
         }
     }
 
+    public static function whereIn () {
+        $model_class = get_called_class();
+        $instance = new $model_class();
+        $table_name = $instance->getTable();
+
+        $connectionName = $instance->getConnection();
+        $config = Config::get('database.'.$connectionName, 'default');
+        $conn = new Connection($config);
+
+        switch (func_num_args()) {
+            case 1:
+                $arg = func_get_arg(0);
+                return (new SelectQuery($table_name, $conn))
+                    ->setObjectClassName($model_class)
+                    ->where($arg);
+            case 2:
+                $arg1 = func_get_arg(0);
+                $arg2 = func_get_arg(1);
+                return (new SelectQuery($table_name, $conn))
+                    ->setObjectClassName($model_class)
+                    ->where($arg1, "IN", $arg2);
+        }
+    }
+
     public function save() {
         $table_name = $this->getTable();
         $config = Config::get('database.'.$this->getConnection(), 'default');
