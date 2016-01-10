@@ -91,7 +91,7 @@ class Model {
             ->get();
     }
 
-    public static function where ($field, $condition, $value) {
+    public static function select($fields) {
         $model_class = get_called_class();
         $instance = new $model_class();
         $table_name = $instance->getTable();
@@ -102,7 +102,38 @@ class Model {
 
         return (new SelectQuery($table_name, $conn))
             ->setObjectClassName($model_class)
-            ->where($field, $condition, $value);
+            ->select($fields);
+    }
+
+    public static function where () {
+        $model_class = get_called_class();
+        $instance = new $model_class();
+        $table_name = $instance->getTable();
+
+        $connectionName = $instance->getConnection();
+        $config = Config::get('database.'.$connectionName, 'default');
+        $conn = new Connection($config);
+
+        switch (func_num_args()) {
+            case 1:
+                $arg = func_get_arg(0);
+                return (new SelectQuery($table_name, $conn))
+                    ->setObjectClassName($model_class)
+                    ->where($arg);
+            case 2:
+                $arg1 = func_get_arg(0);
+                $arg2 = func_get_arg(1);
+                return (new SelectQuery($table_name, $conn))
+                    ->setObjectClassName($model_class)
+                    ->where($arg1, $arg2);
+            case 3:
+                $arg1 = func_get_arg(0);
+                $arg2 = func_get_arg(1);
+                $arg3 = func_get_arg(2);
+                return (new SelectQuery($table_name, $conn))
+                    ->setObjectClassName($model_class)
+                    ->where($arg1, $arg2, $arg3);
+        }
     }
 
     public function save() {
