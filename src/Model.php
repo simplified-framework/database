@@ -88,7 +88,7 @@ class Model {
         return (new SelectQuery($table_name, $conn))
             ->setObjectClassName($model_class)
             ->where($instance->getPrimaryKey(), $id)
-            ->get();
+            ->first();
     }
 
     public static function select($fields) {
@@ -220,7 +220,7 @@ class Model {
             $fk = $foreignKey ? $foreignKey : $this->getTable() . "_id";
             $rel_table = $instance->getTable();
 
-            $data = $modelClass::where($rel_table . "." . $fk, '=', $id_value)->limit(1)->get();
+            $data = $modelClass::where($rel_table . "." . $fk, '=', $id_value)->limit(1)->first();
             return $data;
         }
         throw new ModelException("Unknown model class $modelClass");

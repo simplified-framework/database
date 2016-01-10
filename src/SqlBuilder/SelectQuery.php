@@ -54,7 +54,46 @@ class SelectQuery extends CommonQuery {
                 $stmt->setFetchMode(\PDO::FETCH_CLASS,$this->objectClass);
             else
                 $stmt->setFetchMode(\PDO::FETCH_COLUMN, 0);
-            $result = $stmt->rowCount() == 1 ? $stmt->fetch() : new Collection($stmt->fetchAll());
+            return new Collection($stmt->fetchAll());
+        }
+        return new Collection();
+    }
+
+    public function all() {
+        $query = $this->getQuery();
+        $stmt = $this->connection()->raw($query);
+        if ($stmt && $stmt->rowCount() > 0) {
+            if ($this->objectClass)
+                $stmt->setFetchMode(\PDO::FETCH_CLASS,$this->objectClass);
+            else
+                $stmt->setFetchMode(\PDO::FETCH_COLUMN, 0);
+            return new Collection($stmt->fetchAll());
+        }
+        return new Collection();
+    }
+
+    public function first() {
+        $query = $this->getQuery();
+        $stmt = $this->connection()->raw($query);
+        if ($stmt && $stmt->rowCount() > 0) {
+            if ($this->objectClass)
+                $stmt->setFetchMode(\PDO::FETCH_CLASS,$this->objectClass);
+            else
+                $stmt->setFetchMode(\PDO::FETCH_COLUMN, 0);
+            return $stmt->fetch();
+        }
+        return null;
+    }
+
+    public function last() {
+        $query = $this->getQuery();
+        $stmt = $this->connection()->raw($query);
+        if ($stmt && $stmt->rowCount() > 0) {
+            if ($this->objectClass)
+                $stmt->setFetchMode(\PDO::FETCH_CLASS,$this->objectClass);
+            else
+                $stmt->setFetchMode(\PDO::FETCH_COLUMN, 0);
+            $result = (new Collection($stmt->fetchAll()))->$this->last();
             return $result;
         }
         return null;
