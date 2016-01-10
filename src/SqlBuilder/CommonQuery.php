@@ -43,7 +43,7 @@ class CommonQuery extends BaseQuery{
                     $this->andWhere[] = "$field=$escaped";
                 }
                 else
-                    if (is_array($params)) {
+                    if (is_array($params) && count($params) > 0) {
                         $this->andWhere[] = "$field IN (" . implode(",", $params) . ")";
                     }
                 break;
@@ -69,7 +69,7 @@ class CommonQuery extends BaseQuery{
                     $this->andWhere[] = "$field $operator $escaped";
                 }
                 else
-                    if (is_array($params)) {
+                    if (is_array($params) && count($params) > 0) {
                         $this->andWhere[] = "$field $operator (" . implode(",", $params) . ")";
                     }
                 break;

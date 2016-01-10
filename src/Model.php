@@ -246,5 +246,10 @@ class Model {
             $this->$name = $value;
         }
     }
+
+    public function __call($name, $params) {
+        if (isset($this->attributes[$name]))
+            return $this->attributes[$name];
+    }
 }
 
