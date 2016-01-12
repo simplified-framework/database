@@ -11,6 +11,7 @@ use Simplified\Database\SqlBuilder\DeleteQuery;
 
 class Model {
     private $attributes = array();
+    private $ref;
 
     // override connection name
     static  $connection;
@@ -21,16 +22,26 @@ class Model {
     // override table name
     static  $table;
 
+    private function getReflection() {
+        if ($this->ref == null) {
+            $model_class = get_called_class();
+            $this->ref = new \ReflectionClass($model_class);
+        }
+        return $this->ref;
+    }
+
     public function __construct($attributes = null) {
         if (is_array($attributes))
             $this->attributes = $attributes;
     }
 
     public function getTable() {
-        $model_class = get_called_class();
-        $ref = new ReflectionProperty($model_class, 'table');
-        $table_name = $ref->getValue($this);
+        $table_name = $this->getReflection()
+            ->getProperty('table')
+            ->getValue($this);
+
         if (!$table_name) {
+            $model_class = get_called_class();
             $table_name = strtolower(basename($model_class));
         }
 
@@ -38,9 +49,10 @@ class Model {
     }
 
     public function getPrimaryKey() {
-        $model_class = get_called_class();
-        $ref = new ReflectionProperty($model_class, 'primaryKey');
-        $key = $ref->getValue($this);
+        $key = $this->getReflection()
+            ->getProperty('primaryKey')
+            ->getValue($this);
+
         if (null != $key) {
             return $key;
         }
@@ -49,9 +61,10 @@ class Model {
     }
 
     public function getConnection() {
-        $model_class = get_called_class();
-        $ref = new ReflectionProperty($model_class, 'connection');
-        $connection = $ref->getValue($this);
+        $connection = $this->getReflection()
+            ->getProperty('connection')
+            ->getValue($this);
+
         if (null != $connection) {
             return $connection;
         }
