@@ -4,6 +4,7 @@ namespace Simplified\Database;
 
 use Simplified\Config\Config;
 use ReflectionProperty;
+use Simplified\Core\NullPointerException;
 use Simplified\Database\SqlBuilder\InsertQuery;
 use Simplified\Database\SqlBuilder\SelectQuery;
 use Simplified\Database\SqlBuilder\UpdateQuery;
@@ -37,8 +38,7 @@ class Model {
 
     public function getTable() {
         $table_name = $this->getReflection()
-            ->getProperty('table')
-            ->getValue($this);
+            ->getStaticPropertyValue('table');
 
         if (!$table_name) {
             $model_class = get_called_class();
@@ -50,8 +50,7 @@ class Model {
 
     public function getPrimaryKey() {
         $key = $this->getReflection()
-            ->getProperty('primaryKey')
-            ->getValue($this);
+            ->getStaticPropertyValue('primaryKey');
 
         if (null != $key) {
             return $key;
@@ -62,8 +61,7 @@ class Model {
 
     public function getConnection() {
         $connection = $this->getReflection()
-            ->getProperty('connection')
-            ->getValue($this);
+            ->getStaticPropertyValue('connection');
 
         if (null != $connection) {
             return $connection;
@@ -78,7 +76,9 @@ class Model {
         $table_name = $instance->getTable();
 
         $connectionName = $instance->getConnection();
-        $config = Config::get('database.'.$connectionName, 'default');
+        $config = Config::get('database.'.$connectionName);
+        if ($config == null)
+            throw new NullPointerException("Unable to connect to database: configuration '$connectionName' doesn't exists");
         $conn = new Connection($config);
 
         return (new SelectQuery($table_name, $conn))
