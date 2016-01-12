@@ -13,7 +13,7 @@ class Model {
     private $attributes = array();
 
     // override connection name
-	static  $connection;
+    static  $connection;
 
     // override primary key
     static  $primaryKey;
@@ -21,12 +21,12 @@ class Model {
     // override table name
     static  $table;
 
-	public function __construct($attributes = null) {
+    public function __construct($attributes = null) {
         if (is_array($attributes))
             $this->attributes = $attributes;
     }
-	
-	public function getTable() {
+
+    public function getTable() {
         $model_class = get_called_class();
         $ref = new ReflectionProperty($model_class, 'table');
         $table_name = $ref->getValue($this);
@@ -35,7 +35,7 @@ class Model {
         }
 
         return $table_name;
-	}
+    }
 
     public function getPrimaryKey() {
         $model_class = get_called_class();
@@ -205,7 +205,7 @@ class Model {
             $fk = $foreignKey ? $foreignKey : $this->getTable() . "_id";
             $rel_table = $instance->getTable();
 
-            $data = $modelClass::where($rel_table . "." . $fk, '=', $id_value)->get();
+            $data = $modelClass::where($fk, '=', $id_value)->get();
             return $data;
         }
         throw new ModelException("Unknown model class $modelClass");
@@ -213,14 +213,13 @@ class Model {
 
     public function hasOne($modelClass, $foreignKey = null) {
         if (class_exists($modelClass)) {
-            $pk = $this->getPrimaryKey();
-            $id_value = $this->$pk;
-
             $instance = new $modelClass();
-            $fk = $foreignKey ? $foreignKey : $this->getTable() . "_id";
             $rel_table = $instance->getTable();
 
-            $data = $modelClass::where($rel_table . "." . $fk, '=', $id_value)->limit(1)->first();
+            $fk = $foreignKey ? $foreignKey : $rel_table."_id";
+            $id_value = $this->$fk;
+
+            $data = $modelClass::where('id', '=', $id_value)->first();
             return $data;
         }
         throw new ModelException("Unknown model class $modelClass");
