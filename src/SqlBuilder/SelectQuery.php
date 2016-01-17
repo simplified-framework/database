@@ -72,6 +72,13 @@ class SelectQuery extends CommonQuery {
         return new Collection();
     }
 
+    public function delete() {
+        $rows = $this->get();
+        foreach ($rows as $row) {
+            $row->delete();
+        }
+    }
+
     public function first() {
         $query = $this->getQuery();
         $stmt = $this->connection()->raw($query);
