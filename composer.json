@@ -11,6 +11,9 @@
   "autoload": {
     "psr-4": {
       "Simplified\\Database\\":"src/"
-    }
+    },
+    "files": [
+      "src/helper.php"
+    ]
   }
 }

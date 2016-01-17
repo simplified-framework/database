@@ -7,6 +7,7 @@
  */
 
 namespace Simplified\Database\SqlBuilder;
+
 use Simplified\Database\Connection;
 
 class UpdateQuery extends CommonQuery {
@@ -24,7 +25,7 @@ class UpdateQuery extends CommonQuery {
         $set = array();
         foreach ($this->values as $key => $value) {
             if (is_string($value))
-                $value = "'".$value."'";
+                $value = "'".escape($value)."'";
             $set[] = $key . "=" . $value;
         }
         $args = implode(", ", $set);

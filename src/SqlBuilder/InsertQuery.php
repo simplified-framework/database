@@ -7,6 +7,7 @@
  */
 
 namespace Simplified\Database\SqlBuilder;
+
 use Simplified\Database\Connection;
 
 class InsertQuery extends BaseQuery {
@@ -24,7 +25,7 @@ class InsertQuery extends BaseQuery {
         $fields = implode(",",array_keys($this->values));
         $values = array();
         foreach (array_values($this->values) as $value) {
-            $values[] = is_string($value) ? "'".$value."'" : $value;
+            $values[] = is_string($value) ? "'".escape($value)."'" : $value;
         }
 
         $values = implode(",",array_values($values));
