@@ -2,8 +2,8 @@
 
 namespace Simplified\Database;
 
+use Doctrine\Common\Inflector\Inflector;
 use Simplified\Config\Config;
-use ReflectionProperty;
 use Simplified\Core\NullPointerException;
 use Simplified\Database\SqlBuilder\InsertQuery;
 use Simplified\Database\SqlBuilder\SelectQuery;
@@ -42,7 +42,9 @@ class Model {
 
         if (!$table_name) {
             $model_class = get_called_class();
-            $table_name = strtolower(basename($model_class));
+
+            $table_name = Inflector::tableize($model_class);
+            $table_name = strtolower(basename($table_name));
         }
 
         return $table_name;
@@ -216,7 +218,6 @@ class Model {
 
             $instance = new $modelClass();
             $fk = $foreignKey ? $foreignKey : $this->getTable() . "_id";
-            $rel_table = $instance->getTable();
 
             $data = $modelClass::where($fk, '=', $id_value)->get();
             return $data;
@@ -224,10 +225,23 @@ class Model {
         throw new ModelException("Unknown model class $modelClass");
     }
 
-    public function hasOne($modelClass, $foreignKey = null) {
+    public function hasOne($modelClass, $foreignKey = null, $local_key = null) {
         if (class_exists($modelClass)) {
-            $instance = new $modelClass();
-            $rel_table = $instance->getTable();
+            $rel_table = $this->getTable();
+
+            $fk = $foreignKey ? $foreignKey : $rel_table."_id";
+            $pk = $this->getPrimaryKey();
+            $id_value = $local_key ? $this->$local_key : $this->$pk;
+
+            $data = $modelClass::where($fk, '=', $id_value)->first();
+            return $data;
+        }
+        throw new ModelException("Unknown model class $modelClass");
+    }
+
+    public function belongsTo($modelClass, $foreignKey = null) {
+        if (class_exists($modelClass)) {
+            $rel_table = $this->getTable();
 
             $fk = $foreignKey ? $foreignKey : $rel_table."_id";
             $id_value = $this->$fk;
@@ -264,4 +278,3 @@ class Model {
             return $this->attributes[$name];
     }
 }
-
