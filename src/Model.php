@@ -43,7 +43,9 @@ class Model {
         if (!$table_name) {
             $model_class = get_called_class();
 
-            $table_name = Inflector::tableize($model_class);
+            $ref = new \ReflectionClass($model_class);
+            $table_name = $ref->getShortName();
+            $table_name = Inflector::tableize($table_name);
             $table_name = strtolower(basename($table_name));
         }
 
